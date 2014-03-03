@@ -865,7 +865,7 @@ __gather_system_info() {
 #                 functions by pretending to be Ubuntu (i.e. change global vars)
 #----------------------------------------------------------------------------------------------------------------------
 __ubuntu_derivatives_translation() {
-    UBUNTU_DERIVATIVES="(trisquel|linuxmint|linaro)"
+    UBUNTU_DERIVATIVES="(trisquel|linuxmint|linaro|netrunner)"
     # Mappings
     trisquel_6_ubuntu_base="12.04"
     linuxmint_13_ubuntu_base="12.04"
@@ -877,11 +877,20 @@ __ubuntu_derivatives_translation() {
     linuxmint_16_ubuntu_base="13.10"
 
     linaro_12_ubuntu_base="12.04"
+    
+    netrunner_1306_ubuntu_base="13.04"
+    netrunner_1312_ubuntu_base="13.10"
 
     # Translate Ubuntu derivatives to their base Ubuntu version
     match=$(echo $DISTRO_NAME_L | egrep ${UBUNTU_DERIVATIVES})
     if [ "x${match}" != "x" ]; then
         _major="$(echo $DISTRO_VERSION | sed 's/^\([0-9]*\).*/\1/g')"
+        # Netrunner needs major and minor
+        match_nr=$(echo $DISTRO_NAME_L | egrep "netrunner")
+        if [ "x${match_nr}" != "x" ]; then
+            _minor="$(echo $DISTRO_VERSION | sed 's/.*\.\([0-9]*\)$/\1/g')"
+            _major=${_major}${_minor}
+        fi
         _ubuntu_version="$(eval echo \$${1}_${_major}_ubuntu_base)"
         if [ "x$_ubuntu_version" != "x" ]; then
             echodebug "Detected Ubuntu $_ubuntu_version derivative"
